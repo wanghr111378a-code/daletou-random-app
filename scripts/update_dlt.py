@@ -22,7 +22,7 @@ HEADERS = {
 
 
 
- def get_api_draws():
+def get_api_draws():
     """从公开维护的500彩票网历史数据JSON获取大乐透开奖数据。"""
 
     url = (

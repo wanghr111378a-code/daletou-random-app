@@ -4,129 +4,106 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#0f1b38">
-<meta name="description" content="大乐透随机选号器，仅供娱乐，不构成投注建议。">
-<link rel="manifest" href="./manifest.webmanifest">
-<link rel="icon" href="./icons/icon-192.png">
-<title>大乐透随机选号器</title>
+<meta name="description" content="大乐透随机选号与历史数据统计工具，仅供娱乐。">
+<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icons/icon-192.png">
+<title>大乐透随机选号器 V2.1</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif;background:#0f1117;color:#e8eaed;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px 40px}
-.app{width:100%;max-width:420px}
-h1{font-size:20px;font-weight:600;text-align:center;letter-spacing:1px;margin-bottom:6px}
-.sub{text-align:center;font-size:12px;color:#8a8f99;margin-bottom:22px;line-height:1.6}
-.card{background:#1a1d26;border-radius:18px;padding:20px 16px;margin-bottom:16px}
-.ticket{margin-bottom:18px}.ticket:last-child{margin-bottom:0}
-.ticket-label{font-size:11px;color:#6b7280;margin-bottom:8px;letter-spacing:.5px}
-.balls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.ball{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;font-variant-numeric:tabular-nums}
-.ball.red{background:#c0392b;color:#fff;box-shadow:inset 0 -2px 4px rgba(0,0,0,.25)}
-.ball.blue{background:#2471a3;color:#fff;box-shadow:inset 0 -2px 4px rgba(0,0,0,.25)}
-.divider{width:1px;height:28px;background:#2d3340;margin:0 4px}
-.actions{display:flex;gap:10px}
-.btn{flex:1;border:none;border-radius:14px;padding:14px;font-size:15px;font-weight:600;cursor:pointer;transition:transform .12s,opacity .12s;letter-spacing:.5px}
-.btn:active{transform:scale(.97);opacity:.85}
-.btn-primary{background:#e8eaed;color:#0f1117}
-.btn-secondary{background:#2d3340;color:#e8eaed}
-.options{display:flex;gap:10px;margin-bottom:16px}
-.opt{flex:1;background:#1a1d26;border:1px solid #2d3340;border-radius:12px;padding:12px 8px;text-align:center;font-size:13px;color:#9aa0a8;cursor:pointer;transition:all .15s}
-.opt.active{border-color:#e8eaed;color:#e8eaed;background:#222630}
-.disclaimer{font-size:11px;color:#5c6370;text-align:center;line-height:1.8;margin-top:8px;padding:0 8px}
-.footer{font-size:10px;color:#3d424d;text-align:center;margin-top:24px;line-height:1.8}
-.data-status{font-size:11px; color:#69c9a5;text-align:center; margin:-10px 0 16px;line-height:1.8;}
-</style>
-</head>
-<body>
-<div class="app">
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;background:#0f1117;color:#e8eaed;min-height:100vh;display:flex;justify-content:center;padding:22px 14px 40px}
+.app{width:100%;max-width:520px}h1{text-align:center;font-size:21px;margin-bottom:7px}.sub{text-align:center;font-size:12px;color:#8a8f99;line-height:1.7;margin-bottom:18px}
+.status{text-align:center;color:#69c9a5;font-size:11px;line-height:1.8;margin-bottom:14px}
+.card{background:#1a1d26;border-radius:16px;padding:16px;margin-bottom:14px}.heading{font-size:14px;font-weight:650;margin-bottom:12px}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}.mode{background:#202530;border:1px solid #303644;border-radius:10px;padding:11px 5px;text-align:center;color:#aeb4bf;font-size:12px}.mode.active{border-color:#e8eaed;color:white;background:#303644}
+.ticket{margin-bottom:16px}.ticket:last-child{margin:0}.ticket-label{font-size:11px;color:#818a99;margin-bottom:8px}.balls{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.ball{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:650}.red{background:#c0392b;color:white}.blue{background:#2471a3;color:white}.divider{width:1px;height:27px;background:#3a4050;margin:0 3px}
+.actions{display:flex;gap:9px}.btn{flex:1;border:0;border-radius:12px;padding:13px 8px;font-size:14px;font-weight:650}.primary{background:#e8eaed;color:#111}.secondary{background:#303644;color:white}
+.selectrow{display:flex;align-items:center;gap:10px;font-size:12px;color:#adb5c1}.selectrow select{flex:1;background:#292e3a;color:white;border:1px solid #424958;border-radius:8px;padding:8px}
+.statsummary{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}.statbox{background:#242936;border-radius:10px;padding:11px}.statbox b{display:block;font-size:18px;margin-bottom:4px}.muted{font-size:10px;color:#929baa;line-height:1.6}
+.numbergrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}.cell{background:#242936;border-radius:8px;padding:7px 1px;text-align:center}.cell b{display:block;font-size:13px}.cell small{display:block;font-size:9px;color:#a1a9b6;margin-top:3px}.cell.hot{outline:1px solid #bd554b}.cell.cold{outline:1px solid #397da7}
+.legend,.disclaimer{font-size:10px;color:#858d9b;line-height:1.8;margin-top:9px}.disclaimer{text-align:center;margin:14px 8px 0}.footer{text-align:center;color:#555d69;font-size:10px;margin-top:20px}
+</style></head>
+<body><main class="app">
 <h1>大乐透 · 随机选号器</h1>
-<p class="sub">前区 1–35 选 5 个 · 后区 1–12 选 2 个<br>仅供娱乐，不构成任何投注建议</p>
-<p id="data-status" class="data-status">正在检查开奖数据……</p>
-<div class="options">
-<div class="opt active" data-mode="balanced">平衡随机</div>
-<div class="opt" data-mode="pure">纯随机</div>
+<p class="sub">前区 1–35 选 5 个 · 后区 1–12 选 2 个<br>历史数据辅助统计 · 不具备预测能力</p>
+<p id="status" class="status">正在连接开奖数据……</p>
+<section class="card">
+<div class="heading">选号模式</div>
+<div class="modes">
+<div class="mode active" data-mode="balanced">平衡随机</div><div class="mode" data-mode="pure">纯随机</div>
+<div class="mode" data-mode="weighted">频率加权</div><div class="mode" data-mode="mix">冷热组合</div>
 </div>
-<div class="card" id="output"></div>
-<div class="actions">
-<button class="btn btn-primary" id="btn-generate">生成一注</button>
-<button class="btn btn-secondary" id="btn-generate5">生成 5 注</button>
-</div>
-<p class="disclaimer">彩票开奖号码为独立随机事件，每一注的中奖概率完全相同。<br>本工具仅提供随机号码组合，不具任何预测能力。</p>
-<p class="footer">请理性购彩 · 未成年人不得购买彩票</p>
-</div>
+<div id="output"></div>
+<div class="actions"><button class="btn primary" id="one">生成一注</button><button class="btn secondary" id="five">生成 5 注</button></div>
+</section>
+<section class="card">
+<div class="heading">历史统计</div>
+<div class="selectrow">统计范围<select id="period"><option value="30">最近30期</option><option value="50">最近50期</option><option value="100">最近100期</option><option value="200" selected>最近200期</option></select></div>
+<div id="summary" class="statsummary"><div class="statbox"><b>--</b><span class="muted">等待数据</span></div></div>
+</section>
+<section class="card"><div class="heading">前区号码统计（01–35）</div><div id="frontstats" class="numbergrid"></div><p class="legend">每格显示出现次数与当前遗漏期数。红框代表所选样本相对高频，蓝框代表相对低频。</p></section>
+<section class="card"><div class="heading">后区号码统计（01–12）</div><div id="backstats" class="numbergrid"></div><p class="legend">高频、低频仅描述所选历史样本，不代表下一期趋势。</p></section>
+<p class="disclaimer">重要说明：每期开奖相互独立，每一注合法号码组合的理论中奖概率相同。频率、冷热和遗漏统计不能预测下一期，也不会提高中奖概率。数据来自第三方公开历史数据源，建议与中国体育彩票官方公告抽查核对。</p>
+<p class="footer">理性购彩 · 仅供娱乐 · 未成年人不得购买彩票</p>
+</main>
 <script>
 (function(){
-const FRONT_MAX=35,BACK_MAX=12,FRONT_COUNT=5,BACK_COUNT=2;
-function pickUnique(poolSize,count){
- const pool=Array.from({length:poolSize},(_,i)=>i+1);
- for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
- return pool.slice(0,count).sort((a,b)=>a-b);
-}
-function isBalanced(front){
- const odd=front.filter(n=>n%2===1).length;if(odd<2||odd>3)return false;
- const big=front.filter(n=>n>=18).length;if(big<2||big>3)return false;
- let consecutive=0;for(let i=1;i<front.length;i++){if(front[i]-front[i-1]===1)consecutive++;}
- if(consecutive>1)return false;
- const zones=new Set();front.forEach(n=>zones.add(Math.floor((n-1)/7)));
- if(zones.size>=5)return false;return true;
-}
-function generateFront(mode){
- for(let attempt=0;attempt<500;attempt++){const front=pickUnique(FRONT_MAX,FRONT_COUNT);if(mode==='pure'||isBalanced(front))return front;}
- return pickUnique(FRONT_MAX,FRONT_COUNT);
-}
-const output=document.getElementById('output');let currentMode='balanced';
-function render(tickets){
- if(!tickets.length){output.innerHTML='<p style="text-align:center;color:#5c6370;padding:28px 0;font-size:13px">点击下方按钮生成号码</p>';return;}
- output.innerHTML=tickets.map((t,i)=>`<div class="ticket">${tickets.length>1?`<div class="ticket-label">第 ${i+1} 注</div>`:''}<div class="balls">${t.front.map(n=>`<span class="ball red">${String(n).padStart(2,'0')}</span>`).join('')}<span class="divider"></span>${t.back.map(n=>`<span class="ball blue">${String(n).padStart(2,'0')}</span>`).join('')}</div></div>`).join('');
-}
-function generate(n){const tickets=[];for(let i=0;i<n;i++)tickets.push({front:generateFront(currentMode),back:pickUnique(BACK_MAX,BACK_COUNT)});render(tickets);}
-async function updateDataStatus(){
- const status=document.getElementById('data-status');
- const cacheKey='dlt-history-cache-v1';
-
- try{
-  const response=await fetch('./data/dlt-history.json?t='+Date.now(),{
-   cache:'no-store'
-  });
-
-  if(!response.ok) throw new Error('数据文件尚未发布');
-
-  const data=await response.json();
-
-  if(!Array.isArray(data.draws)||!data.latestIssue){
-   throw new Error('数据格式不正确');
-  }
-
-  localStorage.setItem(cacheKey,JSON.stringify(data));
-
-  const updateTime=data.updatedAt
-   ?new Date(data.updatedAt).toLocaleString('zh-CN')
-   :'时间未知';
-
-  status.textContent='数据已同步 · 最新第'+data.latestIssue+
-   '期 · 更新时间：'+updateTime;
-
- }catch(error){
-  try{
-   const saved=localStorage.getItem(cacheKey);
-
-   if(saved){
-    const data=JSON.parse(saved);
-    status.textContent='网络暂不可用 · 使用缓存数据 · 最新第'+
-     data.latestIssue+'期';
-   }else{
-    status.textContent='等待首次开奖数据同步，请稍后再试';
-   }
-  }catch(e){
-   status.textContent='开奖数据暂不可用';
-  }
+const FRONT=35,BACK=12,$=id=>document.getElementById(id),pad=n=>String(n).padStart(2,'0');
+let draws=[],mode='balanced',period=200;
+function pick(max,count,weights){
+ let pool=Array.from({length:max},(_,i)=>i+1),out=[];
+ while(out.length<count&&pool.length){
+  let idx=0;
+  if(!weights)idx=Math.floor(Math.random()*pool.length);
+  else{let ws=pool.map(n=>Math.max(.05,weights[n]||.05)),sum=ws.reduce((a,b)=>a+b,0),r=Math.random()*sum;for(;idx<ws.length-1;idx++){r-=ws[idx];if(r<=0)break;}}
+  out.push(pool.splice(idx,1)[0]);
  }
+ return out.sort((a,b)=>a-b);
 }
-document.querySelectorAll('.opt').forEach(el=>el.addEventListener('click',function(){document.querySelectorAll('.opt').forEach(o=>o.classList.remove('active'));this.classList.add('active');currentMode=this.dataset.mode;}));
-document.getElementById('btn-generate').addEventListener('click',()=>generate(1));
-document.getElementById('btn-generate5').addEventListener('click',()=>generate(5));
-generate(1);
-updateDataStatus();
+function pickFrom(arr,n){let p=arr.slice();for(let i=p.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[p[i],p[j]]=[p[j],p[i]];}return p.slice(0,n);}
+function balanced(a){let odd=a.filter(n=>n%2).length,big=a.filter(n=>n>=18).length,adj=0;for(let i=1;i<a.length;i++)if(a[i]-a[i-1]===1)adj++;return odd>=2&&odd<=3&&big>=2&&big<=3&&adj<=1&&new Set(a.map(n=>Math.floor((n-1)/7))).size<5;}
+function windowDraws(){return draws.slice(-Math.min(period,draws.length));}
+function stats(field,max,list){
+ let counts=Array(max+1).fill(0),positions=Array.from({length:max+1},()=>[]);
+ list.forEach((d,i)=>d[field].forEach(n=>{counts[n]++;positions[n].push(i);}));
+ let omission=Array(max+1).fill(0),maxGap=Array(max+1).fill(0);
+ for(let n=1;n<=max;n++){let gap=0;for(let i=list.length-1;i>=0;i--){if(list[i][field].includes(n))break;gap++;}omission[n]=gap;let p=positions[n];for(let j=1;j<p.length;j++)maxGap[n]=Math.max(maxGap[n],p[j]-p[j-1]-1);}
+ let sorted=counts.slice(1).sort((a,b)=>a-b);
+ return {counts,omission,maxGap,low:sorted[Math.floor((sorted.length-1)*.2)],high:sorted[Math.ceil((sorted.length-1)*.8)]};
+}
+function renderStats(){
+ let list=windowDraws();if(!list.length)return;
+ let f=stats('front',FRONT,list),b=stats('back',BACK,list);
+ $('summary').innerHTML='<div class="statbox"><b>'+list.length+' 期</b><span class="muted">有效样本 · 最新第 '+list[list.length-1].issue+' 期</span></div><div class="statbox"><b>'+list[0].issue+'–'+list[list.length-1].issue+'</b><span class="muted">期号范围</span></div>';
+ function grid(id,s,max){$(id).innerHTML=Array.from({length:max},(_,i)=>{let n=i+1,cl=s.counts[n]>=s.high?'hot':s.counts[n]<=s.low?'cold':'';return '<div class="cell '+cl+'"><b>'+pad(n)+'</b><small>'+s.counts[n]+'次</small><small>遗漏'+s.omission[n]+'</small></div>';}).join('');}
+ grid('frontstats',f,FRONT);grid('backstats',b,BACK);
+}
+function choose(){
+ let list=windowDraws(),fw=stats('front',FRONT,list),bw=stats('back',BACK,list),front,back;
+ if(mode==='pure'){front=pick(FRONT,5);back=pick(BACK,2);}
+ else if(mode==='weighted'){let a={},b={};for(let n=1;n<=FRONT;n++)a[n]=1+fw.counts[n];for(let n=1;n<=BACK;n++)b[n]=1+bw.counts[n];front=pick(FRONT,5,a);back=pick(BACK,2,b);}
+ else if(mode==='mix'){
+  let fh=Array.from({length:FRONT},(_,i)=>i+1).filter(n=>fw.counts[n]>=fw.high),fc=Array.from({length:FRONT},(_,i)=>i+1).filter(n=>fw.counts[n]<=fw.low);
+  let bh=Array.from({length:BACK},(_,i)=>i+1).filter(n=>bw.counts[n]>=bw.high),bc=Array.from({length:BACK},(_,i)=>i+1).filter(n=>bw.counts[n]<=bw.low);
+  front=[...new Set([...pickFrom(fh,2),...pickFrom(fc,1),...pick(FRONT,5)])];while(front.length<5)front.push(...pick(FRONT,5-front.length));front=front.slice(0,5).sort((a,b)=>a-b);
+  back=[...new Set([...pickFrom(bh,1),...pickFrom(bc,1),...pick(BACK,2)])].slice(0,2);while(back.length<2)back.push(...pick(BACK,2-back.length));back=back.slice(0,2).sort((a,b)=>a-b);
+ }else{for(let i=0;i<500;i++){front=pick(FRONT,5);if(balanced(front))break;}back=pick(BACK,2);}
+ return {front,back};
+}
+function generate(count){let tickets=Array.from({length:count},choose);$('output').innerHTML=tickets.map((t,i)=>'<div class="ticket">'+(count>1?'<div class="ticket-label">第 '+(i+1)+' 注</div>':'')+'<div class="balls">'+t.front.map(n=>'<span class="ball red">'+pad(n)+'</span>').join('')+'<span class="divider"></span>'+t.back.map(n=>'<span class="ball blue">'+pad(n)+'</span>').join('')+'</div></div>').join('');}
+function validate(data){
+ if(!data||!Array.isArray(data.draws))throw Error('数据格式错误');
+ let valid=data.draws.filter(d=>d&&/^\\d{5}$/.test(String(d.issue))&&Array.isArray(d.front)&&d.front.length===5&&Array.isArray(d.back)&&d.back.length===2&&d.front.every(n=>Number.isInteger(n)&&n>=1&&n<=35)&&d.back.every(n=>Number.isInteger(n)&&n>=1&&n<=12)&&new Set(d.front).size===5&&new Set(d.back).size===2);
+ if(!valid.length)throw Error('没有有效开奖记录');return valid.sort((a,b)=>Number(a.issue)-Number(b.issue));
+}
+async function updateData(){
+ let key='dlt-history-cache-v2';
+ try{let r=await fetch('./data/dlt-history.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('网络请求失败');let data=await r.json();draws=validate(data);localStorage.setItem(key,JSON.stringify(data));$('status').textContent='数据同步成功 · 最新第 '+(data.latestIssue||draws.at(-1).issue)+' 期 · '+draws.length+' 期记录';}
+ catch(e){try{let saved=localStorage.getItem(key);if(!saved)throw e;draws=validate(JSON.parse(saved));$('status').textContent='网络暂不可用，使用本机缓存 · 最新第 '+draws.at(-1).issue+' 期';}catch(x){$('status').textContent='开奖数据暂不可用，请检查网络后刷新';}}
+ renderStats();
+}
+document.querySelectorAll('.mode').forEach(el=>el.addEventListener('click',()=>{document.querySelectorAll('.mode').forEach(x=>x.classList.remove('active'));el.classList.add('active');mode=el.dataset.mode;}));
+$('one').addEventListener('click',()=>generate(1));$('five').addEventListener('click',()=>generate(5));$('period').addEventListener('change',e=>{period=Number(e.target.value);renderStats();});
+generate(1);updateData();
 })();
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(err=>console.log('SW注册失败',err)));}
-</script>
-</body>
-</html>
+if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script></body></html>

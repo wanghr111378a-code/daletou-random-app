@@ -32,12 +32,14 @@ h1{font-size:20px;font-weight:600;text-align:center;letter-spacing:1px;margin-bo
 .opt.active{border-color:#e8eaed;color:#e8eaed;background:#222630}
 .disclaimer{font-size:11px;color:#5c6370;text-align:center;line-height:1.8;margin-top:8px;padding:0 8px}
 .footer{font-size:10px;color:#3d424d;text-align:center;margin-top:24px;line-height:1.8}
+.data-status{font-size:11px; color:#69c9a5;text-align:center; margin:-10px 0 16px;line-height:1.8;}
 </style>
 </head>
 <body>
 <div class="app">
 <h1>大乐透 · 随机选号器</h1>
 <p class="sub">前区 1–35 选 5 个 · 后区 1–12 选 2 个<br>仅供娱乐，不构成任何投注建议</p>
+<p id="data-status" class="data-status">正在检查开奖数据……</p>
 <div class="options">
 <div class="opt active" data-mode="balanced">平衡随机</div>
 <div class="opt" data-mode="pure">纯随机</div>
@@ -76,10 +78,53 @@ function render(tickets){
  output.innerHTML=tickets.map((t,i)=>`<div class="ticket">${tickets.length>1?`<div class="ticket-label">第 ${i+1} 注</div>`:''}<div class="balls">${t.front.map(n=>`<span class="ball red">${String(n).padStart(2,'0')}</span>`).join('')}<span class="divider"></span>${t.back.map(n=>`<span class="ball blue">${String(n).padStart(2,'0')}</span>`).join('')}</div></div>`).join('');
 }
 function generate(n){const tickets=[];for(let i=0;i<n;i++)tickets.push({front:generateFront(currentMode),back:pickUnique(BACK_MAX,BACK_COUNT)});render(tickets);}
+async function updateDataStatus(){
+ const status=document.getElementById('data-status');
+ const cacheKey='dlt-history-cache-v1';
+
+ try{
+  const response=await fetch('./data/dlt-history.json?t='+Date.now(),{
+   cache:'no-store'
+  });
+
+  if(!response.ok) throw new Error('数据文件尚未发布');
+
+  const data=await response.json();
+
+  if(!Array.isArray(data.draws)||!data.latestIssue){
+   throw new Error('数据格式不正确');
+  }
+
+  localStorage.setItem(cacheKey,JSON.stringify(data));
+
+  const updateTime=data.updatedAt
+   ?new Date(data.updatedAt).toLocaleString('zh-CN')
+   :'时间未知';
+
+  status.textContent='数据已同步 · 最新第'+data.latestIssue+
+   '期 · 更新时间：'+updateTime;
+
+ }catch(error){
+  try{
+   const saved=localStorage.getItem(cacheKey);
+
+   if(saved){
+    const data=JSON.parse(saved);
+    status.textContent='网络暂不可用 · 使用缓存数据 · 最新第'+
+     data.latestIssue+'期';
+   }else{
+    status.textContent='等待首次开奖数据同步，请稍后再试';
+   }
+  }catch(e){
+   status.textContent='开奖数据暂不可用';
+  }
+ }
+}
 document.querySelectorAll('.opt').forEach(el=>el.addEventListener('click',function(){document.querySelectorAll('.opt').forEach(o=>o.classList.remove('active'));this.classList.add('active');currentMode=this.dataset.mode;}));
 document.getElementById('btn-generate').addEventListener('click',()=>generate(1));
 document.getElementById('btn-generate5').addEventListener('click',()=>generate(5));
 generate(1);
+updateDataStatus();
 })();
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(err=>console.log('SW注册失败',err)));}
 </script>

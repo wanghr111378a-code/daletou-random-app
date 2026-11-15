@@ -21,76 +21,71 @@ HEADERS = {
 }
 
 
-def get_api_draws():
-    """从中国体育彩票公开接口获取大乐透历史开奖数据。"""
-    params = {
-    "gameNo": "85",
-    "provinceId": "0",
-    "pageSize": "100",
-    "isVerify": "1",
-    "pageNo": "1"
-    }
+
+ def get_api_draws():
+    """从公开维护的500彩票网历史数据JSON获取大乐透开奖数据。"""
+
+    url = (
+        "https://raw.githubusercontent.com/"
+        "yangxb919/lottery-data/main/data/dlt.json"
+    )
 
     response = requests.get(
-        API_URL,
-        params=params,
-        headers=HEADERS,
-        timeout=25
+        url,
+        headers={"User-Agent": "Mozilla/5.0"},
+        timeout=40
     )
     response.raise_for_status()
-    result = response.json()
 
-    value = result.get("value") or {}
-    rows = value.get("list") or []
+    rows = response.json()
 
-    if not rows:
-        raise RuntimeError("官方接口没有返回开奖列表，停止更新。")
+    if not isinstance(rows, list) or not rows:
+        raise RuntimeError("备用数据源没有返回有效开奖列表。")
 
     draws = []
 
-    for row in rows:
-        issue = str(row.get("lotteryDrawNum", "")).strip()
-        date = str(row.get("lotteryDrawTime", "")).strip()
-        result_text = str(row.get("lotteryDrawResult", "")).strip()
+    for row in rows[:200]:
+        try:
+            issue = str(row["issue"]).strip()
+            date = str(row["date"]).strip()
 
-        if not issue or not date or not result_text:
+            front = sorted(int(x) for x in row["front"])
+            back = sorted(int(x) for x in row["back"])
+
+            if len(issue) != 5:
+                continue
+
+            if len(front) != 5 or len(set(front)) != 5:
+                continue
+
+            if len(back) != 2 or len(set(back)) != 2:
+                continue
+
+            if any(x < 1 or x > 35 for x in front):
+                continue
+
+            if any(x < 1 or x > 12 for x in back):
+                continue
+
+            draws.append({
+                "issue": issue,
+                "date": date,
+                "front": front,
+                "back": back
+            })
+
+        except (KeyError, TypeError, ValueError):
             continue
-
-        # 官方开奖结果通常为：01 02 03 04 05 + 01 02
-        numbers = [int(x) for x in re.findall(r"\d+", result_text)]
-
-        
-        numbers = [int(x) for x in re.findall(r"\d+", result_text)]
-
-        if len(numbers) != 7:
-            continue
-
-        front = numbers[:5]
-        back = numbers[5:]
-
-        # 严格检查号码数量、范围和重复情况
-        if len(front) != 5 or len(back) != 2:
-            continue
-        if len(set(front)) != 5 or len(set(back)) != 2:
-            continue
-        if any(x < 1 or x > 35 for x in front):
-            continue
-        if any(x < 1 or x > 12 for x in back):
-            continue
-
-        draws.append({
-            "issue": issue,
-            "date": date,
-            "front": sorted(front),
-            "back": sorted(back)
-        })
 
     if not draws:
-        raise RuntimeError("接口数据未通过格式校验，停止更新。")
+        raise RuntimeError("备用数据源数据格式校验失败。")
 
-    # 按期号排序，并去除重复期号
     unique = {item["issue"]: item for item in draws}
-    return sorted(unique.values(), key=lambda x: int(x["issue"]))
+
+    return sorted(
+        unique.values(),
+        key=lambda x: int(x["issue"])
+    )
 
 
 def load_old_data():

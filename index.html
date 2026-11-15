@@ -92,7 +92,7 @@ function choose(){
 function generate(count){let tickets=Array.from({length:count},choose);$('output').innerHTML=tickets.map((t,i)=>'<div class="ticket">'+(count>1?'<div class="ticket-label">第 '+(i+1)+' 注</div>':'')+'<div class="balls">'+t.front.map(n=>'<span class="ball red">'+pad(n)+'</span>').join('')+'<span class="divider"></span>'+t.back.map(n=>'<span class="ball blue">'+pad(n)+'</span>').join('')+'</div></div>').join('');}
 function validate(data){
  if(!data||!Array.isArray(data.draws))throw Error('数据格式错误');
- let valid=data.draws.filter(d=>d&&/^\\d{5}$/.test(String(d.issue))&&Array.isArray(d.front)&&d.front.length===5&&Array.isArray(d.back)&&d.back.length===2&&d.front.every(n=>Number.isInteger(n)&&n>=1&&n<=35)&&d.back.every(n=>Number.isInteger(n)&&n>=1&&n<=12)&&new Set(d.front).size===5&&new Set(d.back).size===2);
+ let valid=data.draws.filter(d=>d&&/^\d{5}$/.test(String(d.issue))&&Array.isArray(d.front)&&d.front.length===5&&Array.isArray(d.back)&&d.back.length===2&&d.front.every(n=>Number.isInteger(n)&&n>=1&&n<=35)&&d.back.every(n=>Number.isInteger(n)&&n>=1&&n<=12)&&new Set(d.front).size===5&&new Set(d.back).size===2);
  if(!valid.length)throw Error('没有有效开奖记录');return valid.sort((a,b)=>Number(a.issue)-Number(b.issue));
 }
 async function updateData(){

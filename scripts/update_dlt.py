@@ -10,18 +10,25 @@ API_URL = "https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry"
 DATA_FILE = "data/dlt-history.json"
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0",
-    "Referer": "https://www.sporttery.cn/"
+    "User-Agent": (
+        "Mozilla/5.0 (Linux; Android 14) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/120.0.0.0 Mobile Safari/537.36"
+    ),
+    "Accept": "application/json, text/plain, */*",
+    "Referer": "https://m.lottery.gov.cn/",
+    "Connection": "keep-alive"
 }
 
 
 def get_api_draws():
     """从中国体育彩票公开接口获取大乐透历史开奖数据。"""
     params = {
-        "gameNo": "85",
-        "provinceId": "0",
-        "pageSize": "200",
-        "pageNo": "1"
+    "gameNo": "85",
+    "provinceId": "0",
+    "pageSize": "100",
+    "isVerify": "1",
+    "pageNo": "1"
     }
 
     response = requests.get(
@@ -50,14 +57,13 @@ def get_api_draws():
             continue
 
         # 官方开奖结果通常为：01 02 03 04 05 + 01 02
-        parts = re.split(r"\s*\+\s*", result_text)
+        numbers = [int(x) for x in re.findall(r"\d+", result_text)]
 
-        if len(parts) != 2:
-            continue
+       if len(numbers) != 7:
+          continue
 
-        front = [int(x) for x in re.findall(r"\d+", parts[0])]
-        back = [int(x) for x in re.findall(r"\d+", parts[1])]
-
+          front = numbers[:5]
+          back = numbers[5:]
         # 严格检查号码数量、范围和重复情况
         if len(front) != 5 or len(back) != 2:
             continue

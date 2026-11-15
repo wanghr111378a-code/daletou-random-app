@@ -59,11 +59,15 @@ def get_api_draws():
         # 官方开奖结果通常为：01 02 03 04 05 + 01 02
         numbers = [int(x) for x in re.findall(r"\d+", result_text)]
 
-       if len(numbers) != 7:
-          continue
+        
+        numbers = [int(x) for x in re.findall(r"\d+", result_text)]
 
-          front = numbers[:5]
-          back = numbers[5:]
+        if len(numbers) != 7:
+            continue
+
+        front = numbers[:5]
+        back = numbers[5:]
+
         # 严格检查号码数量、范围和重复情况
         if len(front) != 5 or len(back) != 2:
             continue

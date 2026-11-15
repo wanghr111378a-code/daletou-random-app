@@ -98,7 +98,7 @@ function validate(data){
 async function updateData(){
  let key='dlt-history-cache-v2';
  try{let r=await fetch('./data/dlt-history.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('网络请求失败');let data=await r.json();draws=validate(data);localStorage.setItem(key,JSON.stringify(data));$('status').textContent='数据同步成功 · 最新第 '+(data.latestIssue||draws.at(-1).issue)+' 期 · '+draws.length+' 期记录';}
- catch(e){try{let saved=localStorage.getItem(key);if(!saved)throw e;draws=validate(JSON.parse(saved));$('status').textContent='网络暂不可用，使用本机缓存 · 最新第 '+draws.at(-1).issue+' 期';}catch(x){$('status').textContent='开奖数据暂不可用，请检查网络后刷新';}}
+ catch(e){try{let saved=localStorage.getItem(key);if(!saved)throw e;draws=validate(JSON.parse(saved));$('status').textContent='网络暂不可用，使用本机缓存 · 最新第 '+draws.at(-1).issue+' 期';}catch(x){$('status').textContent='数据读取失败：'+(x.message||String(x));}}
  renderStats();
 }
 document.querySelectorAll('.mode').forEach(el=>el.addEventListener('click',()=>{document.querySelectorAll('.mode').forEach(x=>x.classList.remove('active'));el.classList.add('active');mode=el.dataset.mode;}));
